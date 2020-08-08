@@ -5,16 +5,18 @@ logging.basicConfig(level=logging.INFO)# OPTIONAL
 
 
 
-tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
-model = BertForMaskedLM.from_pretrained('bert-base-uncased')
+tokenizer = BertTokenizer.from_pretrained('bert-base-multilingual-cased')
+model = BertForMaskedLM.from_pretrained('bert-base-multilingual-cased')
 model.eval()
 # model.to('cuda')  # if you have gpu
 
 
+#https://stackoverflow.com/questions/54978443/predicting-missing-words-in-a-sentence-natural-language-processing-model
 def predict_masked_sent(text, top_k=5):
     # Tokenize input
     text = "[CLS] %s [SEP]"%text
     tokenized_text = tokenizer.tokenize(text)
+    #print(tokenizer.lang2id)
     masked_index = tokenized_text.index("[MASK]")
     indexed_tokens = tokenizer.convert_tokens_to_ids(tokenized_text)
     tokens_tensor = torch.tensor([indexed_tokens])
@@ -34,4 +36,4 @@ def predict_masked_sent(text, top_k=5):
         print("[MASK]: '%s'"%predicted_token, " | weights:", float(token_weight))
 
         
-predict_masked_sent("My dad is so [MASK].", top_k=5)
+predict_masked_sent("La meva mare [MASK] molt guapa.", top_k=10)
